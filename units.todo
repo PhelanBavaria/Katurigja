@@ -1,0 +1,11 @@
+Attributes:
+  - range
+  - stamina
+  - speed
+  - damage
+    - blunt
+    - pierce
+    - slash
+
+Relation (Unit - Trooptype):
+  

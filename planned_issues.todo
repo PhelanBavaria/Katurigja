@@ -1,0 +1,10 @@
+- Add basic unit class
+- Add character class that inherits from unit class
+- Add folders for saved characters
+- Add argument 'name' when initializing character
+- Look for the name in saved characters
+  - if character with that name exists, load it
+  - else create random character and save it
+    # use default values instead of random ones for now
+- Ask in the console if a character should be created if it doesn't exist
+- Throw error in the setup of battle if given character doesn't exist
