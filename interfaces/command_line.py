@@ -23,12 +23,13 @@ class CommandLine:
             self.counter -= 1
         else:
             command = input('>>> ')
+            command = command.split(': ')
+            action, args = command[0], command[1:]
             try:
-                command = command.split(': ')
-                action, args = command[0], command[1:]
-                self.actions[action](*args)
+                action = self.actions[action]
             except KeyError:
                 print('Action not supported')
+            action(*args)
 
     def _exit(self, *args):
         self.exit = True
@@ -41,7 +42,7 @@ class CommandLine:
 
     def setup_example_battle(self, *args):
         setup = {
-
+            'map': 'grassland'
         }
         self.game.battle = Battle(setup)
         print('Battle is ready!')
