@@ -1,5 +1,6 @@
 
 
+from common import Unit
 from common import Battle
 
 
@@ -13,6 +14,7 @@ class CommandLine:
         self.actions = {
             'exit': self._exit,
             'eval': self._eval,
+            'create_character': self.create_character,
             'setup_example_battle': self.setup_example_battle,
             'make_turn': self.make_turn
         }
@@ -29,6 +31,7 @@ class CommandLine:
                 action = self.actions[action]
             except KeyError:
                 print('Action not supported')
+                return
             action(*args)
 
     def _exit(self, *args):
@@ -39,6 +42,19 @@ class CommandLine:
             eval(args[0])
         else:
             print('You are not allowed to use this command')
+
+    def create_character(self, *args):
+        def warning_overwrite():
+            yesno = input('Character already exists, continue? (y/n)')
+            if yesno == 'y':
+                return True
+            elif yesno == 'n':
+                return False
+            else:
+                print('No valid answer!')
+                return warning_overwrite()
+        unit = Unit(args[0], 'general')
+        unit.save(warning_overwrite)
 
     def setup_example_battle(self, *args):
         setup = {
