@@ -8,6 +8,7 @@ class CommandLine:
     counter = 0
     last_action = None
     exit = False
+    character = None
 
     def __init__(self, game):
         self.game = game
@@ -57,11 +58,19 @@ class CommandLine:
         unit.save(warning_overwrite)
 
     def setup_example_battle(self, *args):
+        testian = Unit('Testian', 'general')
+        self.character = testian
         setup = {
-            'map': 'grassland'
+            'map': 'grassland',
+            'nations': {'testnation': {'units': [testian]}}
         }
         self.game.battle = Battle(setup)
         print('Battle is ready!')
+
+    def place_formation(self, *args):
+        name, pos = args[0], args[1]
+        formation = self.game.battle.setup['formations'][name]
+        formation.place(pos)
 
     def make_turn(self, *args):
         try:

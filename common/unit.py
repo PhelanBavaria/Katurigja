@@ -9,6 +9,7 @@ class Unit:
     def __init__(self, name=None, title=None):
         self.name = name
         self.title = title
+        self.position = ()
         if name and name in characters.overview:
             self.load()
         else:
