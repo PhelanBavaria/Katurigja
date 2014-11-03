@@ -45,7 +45,7 @@ class Unit:
         except OSError:
             if on_existing and not on_existing():
                 return
-        stats = yaml.dump(self.stats)
-        equip = yaml.dump(self.equipment)
+        stats = yaml.dump(self.stats, default_flow_style=False)
+        equip = yaml.dump(self.equipment, default_flow_style=False)
         open('characters/' + self.name + '/stats.yml', 'w+').write(stats)
         open('characters/' + self.name + '/equip.yml', 'w+').write(equip)
