@@ -2,6 +2,7 @@
 
 from common import Unit
 from common import Battle
+from common import Formation
 
 
 class CommandLine:
@@ -9,6 +10,7 @@ class CommandLine:
     last_action = None
     exit = False
     character = None
+    nation = 'testnation'
 
     def __init__(self, game):
         self.game = game
@@ -17,6 +19,7 @@ class CommandLine:
             'eval': self._eval,
             'create_character': self.create_character,
             'setup_example_battle': self.setup_example_battle,
+            'place_formation': self.place_formation,
             'make_turn': self.make_turn
         }
 
@@ -59,18 +62,20 @@ class CommandLine:
 
     def setup_example_battle(self, *args):
         testian = Unit('Testian', 'general')
+        formation = Formation([testian,])
         self.character = testian
         setup = {
             'map': 'grassland',
-            'nations': {'testnation': {'units': [testian]}}
+            'nations': {self.nation: {'formations': {'1': formation}}}
         }
         self.game.battle = Battle(setup)
         print('Battle is ready!')
 
     def place_formation(self, *args):
-        name, pos = args[0], args[1]
-        formation = self.game.battle.setup['formations'][name]
-        formation.place(pos)
+        args = args[0].split(' ')
+        name, pos = args[0], args[1:]
+        pos = map(int, pos)
+        self.character.formation.place(*pos)
 
     def make_turn(self, *args):
         try:

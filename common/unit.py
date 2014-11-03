@@ -10,6 +10,8 @@ class Unit:
         self.name = name
         self.title = title
         self.position = ()
+        self.rotation = 0
+        self.formation = None
         if name and name in characters.overview:
             self.load()
         else:
@@ -18,6 +20,7 @@ class Unit:
     def create(self):
         self.stats = {
             'strength': 1,
+            'speed': 1,
             'stamina': 1,
             'willpower': 1,
             'strategic': 1,
