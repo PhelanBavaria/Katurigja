@@ -1,6 +1,7 @@
 
 
 from content.maps import mapgen
+from common import Unit
 
 
 class Battle:
@@ -8,7 +9,6 @@ class Battle:
         self.setup = setup
         self.turn = 0
         self.history = {}
-        self.units = {}
         self.tiles = {}
         self._setup(setup)
 
@@ -17,4 +17,6 @@ class Battle:
 
     def make_turn(self):
         self.turn += 1
+        print(Unit.units)
+        [unit.update() for unit in Unit.units]
         print('turn: ', self.turn)

@@ -20,6 +20,7 @@ class CommandLine:
             'create_character': self.create_character,
             'setup_example_battle': self.setup_example_battle,
             'place_formation': self.place_formation,
+            'move': self.move,
             'make_turn': self.make_turn
         }
 
@@ -76,6 +77,10 @@ class CommandLine:
         name, pos = args[0], args[1:]
         pos = map(int, pos)
         self.character.formation.place(*pos)
+
+    def move(self, *args):
+        distance = int(args[0])
+        self.character.todo = ('move', distance)
 
     def make_turn(self, *args):
         try:
