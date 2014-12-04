@@ -1,21 +1,21 @@
 
 
+from interfaces import Base
+from interfaces import Player
+from interfaces import AI
+from battle import Battle
 from common import Unit
-from common import Battle
 from common import Formation
 
 
-class CommandLine:
+class CommandLine(Base):
     counter = 0
     last_action = None
-    exit = False
-    character = None
-    nation = 'testnation'
 
     def __init__(self, game):
-        self.game = game
+        Base.__init__(self, game)
         self.actions = {
-            'exit': self._exit,
+            'exit': self.exit,
             'eval': self._eval,
             'create_character': self.create_character,
             'setup_example_battle': self.setup_example_battle,
@@ -30,25 +30,28 @@ class CommandLine:
             self.counter -= 1
         else:
             command = input('>>> ')
-            command = command.split(': ')
-            action, args = command[0], command[1:]
             try:
-                action = self.actions[action]
+                action = self.actions[command]
             except KeyError:
                 print('Action not supported')
                 return
-            action(*args)
+            return action()
 
-    def _exit(self, *args):
-        self.exit = True
-
-    def _eval(self, *args):
+    def _eval(self):
         if self.game.config['eval']:
-            eval(args[0])
+            try:
+                return eval(input('\t'))
+            except NameError:
+                print('No valid command')
+            except SyntaxError:
+                print('SyntaxError')
         else:
             print('You are not allowed to use this command')
 
-    def create_character(self, *args):
+    def exit(self):
+        return False
+
+    def create_character(self):
         def warning_overwrite():
             yesno = input('Character already exists, continue? (y/n)')
             if yesno == 'y':
@@ -58,37 +61,55 @@ class CommandLine:
             else:
                 print('No valid answer!')
                 return warning_overwrite()
-        unit = Unit(args[0], 'general')
+        name = input('name: ')
+        unit = Unit(name, 'general')
         unit.save(warning_overwrite)
 
-    def setup_example_battle(self, *args):
+    def setup_example_battle(self):
+        battle = Battle()
         testian = Unit('Testian', 'general')
         formation = Formation([testian,])
-        self.character = testian
-        setup = {
-            'map': 'grassland',
-            'nations': {self.nation: {'formations': {'1': formation}}}
-        }
-        self.game.battle = Battle(setup)
-        print('Battle is ready!')
+        player = Player(self.game)
+        player.character = testian
+        battle.controllers.append(player)
+        for i in range(10):
+            unit = Unit()
+            formation.add_unit(unit)
+            ai = AI(self.game)
+            ai.character = unit
+            battle.controllers.append(ai)
+        self.game.battle = battle
 
-    def place_formation(self, *args):
-        args = args[0].split(' ')
-        name, pos = args[0], args[1:]
-        pos = map(int, pos)
-        self.character.formation.place(*pos)
-
-    def move(self, *args):
-        distance = int(args[0])
-        self.character.todo = ('move', distance)
-
-    def make_turn(self, *args):
+    def place_formation(self):
+        id_name = input('Commander ID: ')
+        for controller in self.game.battle.controllers:
+            is_id = controller.character._id == id_name
+            is_name = controller.character.name == id_name
+            if is_id or is_name:
+                commander = controller.character
+                break
+        else:
+            print('Commander not found')
+            return
+        pos = input('Position: ')
         try:
-            self.game.battle.make_turn()
+            x, y = pos.split(' ')
+            x, y = int(x), int(y)
+        except ValueError:
+            print('Input must be: X Y')
+            return
+        commander.formation.place(x, y)
+
+    def move(self):
+        k_move = self.game.keymap['p_move']
+        #keys_down = self.game.keys_down
+        self.game.keys_down.append(k_move)
+        #self.game.keys_down = set(keys_down)
+
+    def make_turn(self):
+        '''only advised to use if config['battle_turn_time'] is 0'''
+        try:
+            self.game.battle.update()
         except AttributeError:
             print('Battle has to be setup first')
             return
-        if args:
-            times = int(args[0])-1
-            self.counter += times
-            self.last_action = self.make_turn

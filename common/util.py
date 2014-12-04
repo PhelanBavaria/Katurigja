@@ -1,6 +1,7 @@
 
 
 import math
+import random
 
 
 def rect(r, d, use_degrees=True):
@@ -15,6 +16,14 @@ def polar(x, y, return_degrees=True):
         result = math.degrees(result)
     return result
 
+def rand_id(length=16):
+    _id = ''
+    for i in range(length):
+        c = random.choice(list(range(48, 58)) + list(range(65, 91)))
+        _id += str(chr(c))
+    return _id
+
+
 
 if __name__ == '__main__':
     print(polar(-1, -1))
@@ -26,3 +35,4 @@ if __name__ == '__main__':
     print(rect(1, 270), 270)
     print(rect(1, 315), 315)
     print(rect(1, 360), 360)
+    print(rand_id())

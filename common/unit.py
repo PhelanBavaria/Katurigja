@@ -8,14 +8,15 @@ from common import util
 
 
 class Unit:
-    units = []
     def __init__(self, name=None, title=None):
+        self._id = util.rand_id()
         self.name = name
         self.title = title
         self.position = ()
         self.rotation = 0
+        self.higher_commander = ''
+        self.lower_commanders = []
         self.formation = None
-        self.todo = ()
         self.actions = {
             'move': self.move
         }
@@ -23,7 +24,6 @@ class Unit:
             self.load()
         else:
             self.create()
-        Unit.units.append(self)
 
     def create(self):
         self.stats = {
@@ -41,22 +41,11 @@ class Unit:
         }
         self.equipment = {}
 
-    def update(self):
-        if not self.todo:
-            return
-        self.actions[self.todo[0]](self.todo[1])
-
-    def move(self, distance):
+    def move(self):
         speed = self.stats['speed']
-        relative = util.rect(min(speed, distance), self.rotation)
+        relative = util.rect(speed, self.rotation)
         self.position = map(operator.add, self.position, relative)
         self.position = tuple(self.position)
-        distance -= min(distance, speed)
-        if distance > 0:
-            self.todo = ('move', distance)
-        else:
-            self.todo = ()
-
 
     def load(self):
         stats = open('characters/' + self.name + '/stats.yml').read()

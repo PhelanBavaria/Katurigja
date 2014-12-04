@@ -30,8 +30,7 @@ class Formation:
 
     def move(self):
         for unit in self.units:
-            unit.rotation = self.rotation
-            unit.move()
+            pass  # Give unit the order to move
 
     def place(self, x, y):
         for unit in self.units:
